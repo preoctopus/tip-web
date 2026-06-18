@@ -1,0 +1,7 @@
+# Docker ignore file
+read_pdf.py
+SUMMARY.md
+Thriving_In_Place_alpha_v1.1_mobile.pdf
+AGENTS.md
+README.md
+DEPLOYMENT.md

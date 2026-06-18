@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore zoning reform and upzoning strategies to build sustainable, walkable, affordable, and equitable neighborhoods that allow everyone to thrive in place.">
+    <title>Thriving In Place | Sustainable Communities through Zoning Reform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #2d5a27; /* Forest Green */
+            --color-secondary: #e2725b; /* Terracotta Accent */
+            --color-bg: #faf9f6; /* Off-white/Cream */
+            --color-text: #333330; /* Dark Charcoal */
+            --color-accent-light: #e8ede9; /* Very light green */
+            --color-white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            color: var(--color-primary);
+            line-height: 1.2;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        header {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        header h1 {
+            color: var(--color-white);
+            font-size: 3.5rem;
+            margin: 0;
+        }
+
+        header p {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-top: 1rem;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #ddd;
+            padding: 1rem 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--color-secondary);
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .hero-text {
+            font-family: 'Lora', serif;
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #555;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        h2::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--color-secondary);
+            margin-top: 10px;
+        }
+
+        /* Card / Box Styles */
+        .card {
+            background: var(--color-white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .link-text a {
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        .link-text a:hover {
+            color: var(--color-secondary);
+        }
+
+        .highlight-box {
+            background: var(--color-accent-light);
+            border-left: 6px solid var(--color-primary);
+            padding: 2rem;
+            font-size: 1.2rem;
+            margin: 3rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        blockquote {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            border-left: none;
+            text-align: center;
+            padding: 2rem;
+            margin: 3rem 0;
+            background: #f0f4f0;
+            color: var(--color-primary);
+            border-radius: 8px;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--color-white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: var(--color-primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfcf9;
+        }
+
+        tr:hover {
+            background-color: #f5f7f5;
+        }
+
+        /* Image Styles */
+        .image-container {
+            margin: 2.5rem 0;
+            text-align: center;
+        }
+
+        .featured-image {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .featured-image:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .image-caption {
+            font-family: 'Lora', serif;
+            font-size: 0.95rem;
+            font-style: italic;
+            color: #555;
+            margin-top: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Grid for Benefits */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Glossary List */
+        dl dt {
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        dl dd {
+            margin-left: 0;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        footer {
+            background: var(--color-primary);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .footer-content p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>Thriving In Place</h1>
+        <p>Building sustainable, livable, and equitable communities through zoning reform.</p>
+    </div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#zoning">What is Zoning?</a></li>
+        <li><a href="#benefits">The Benefits</a></li>
+        <li><a href="#advocacy">How to Help</a></li>
+        <li><a href="#cases">Case Studies</a></li>
+        <li><a href="#glossary">Glossary</a></li>
+    </ul>
+</nav>
+
+<main class="container">
+
+    <!-- Introduction -->
+    <section id="intro">
+        <p class="hero-text">Imagine a neighborhood where you can walk to the grocery store, your children live just blocks away, and seniors can stay in their homes as they age. This isn't a dream—it is possible through smart local planning.</p>
+        <h2>The Vision of "Thriving In Place"</h2>
+        
+        <div class="image-container">
+            <img src="assets/walkable_neighborhood.png" alt="A vibrant, walkable, and sustainable mixed-use neighborhood illustration" class="featured-image">
+            <div class="image-caption">A vision of a walkable, mixed-use, and transit-friendly community where housing sits above local shops and cafes.</div>
+        </div>
+
+        <p>For decades, many of our cities have been shaped by rules that push people apart. We have built sprawling suburbs that require long car commutes and single-family neighborhoods that make it difficult for anything other than one house per lot to exist. This pattern has led to increased pollution, higher housing costs, and a sense of isolation.</p>
+        <p><strong>"Thriving In Place"</strong> is a different way of looking at our communities. It is an approach focused on <em>upzoning</em>—updating local land-use regulations to allow for more diversity in housing and uses within our existing neighborhoods. Instead of building new, distant suburbs, we work with the infrastructure we already have to create vibrant, walkable, and connected places.</p>
+        <div class="highlight-box">
+            "Thriving in place means reforming local zoning rules so neighborhoods can accommodate more housing types, support aging in place, reduce car-dependent sprawl, and create accessible, walkable communities."
+        </div>
+    </section>
+
+    <!-- What is Zoning? -->
+    <section id="zoning">
+        <h2>What is Zoning and Why Does It Matter?</h2>
+        <p>Zoning is essentially a set of ground rules created by local governments. These rules decide what can be built where. For example, they define which areas are for houses (residential), which are for shops (commercial), and which are for factories (industrial).</p>
+        <p>While these rules were originally designed to keep polluting factories away from homes, modern zoning has often gone much further. In many U.S. and Canadian cities, it is actually <strong>illegal</strong> to build anything other than a single-detached house on a large portion of residential land. This means you cannot easily add a small apartment in your backyard, or build a duplex next door.</p>
+        
+        <div class="image-container">
+            <img src="assets/missing_middle.png" alt="Missing Middle Housing options side-by-side: duplex, triplex, and townhouses" class="featured-image">
+            <div class="image-caption">Missing Middle Housing formats—duplexes, triplexes, and townhouses—blend into residential neighborhoods while expanding housing availability.</div>
+        </div>
+
+        <div class="card">
+            <h3>The Impact of Restrictive Zoning</h3>
+            <ul>
+                <li><strong>Limited Housing Options:</strong> It prevents the creation of "Missing Middle" housing like townhouses and multiplexes.</li>
+                <li><strong>Increased Sprawl:</strong> Because we can't build enough in existing areas, cities expand outward, eating up forests and farmland.</li>
+                <li><strong>Car Dependency:</strong> When homes are far from shops and offices, driving becomes a necessity rather than a choice.</li>
+                <li><strong>Higher Costs:</strong> Low supply and high demand drive up the price of everything from rent to mortgages.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- The Benefits -->
+    <section id="benefits">
+        <h2>The Power of Upzoning</h2>
+        <p>Upzoning is the process of changing these rules to allow for more density and variety. By allowing things like Accessory Dwelling Units (ADUs), duplexes, and mixed-use buildings, we unlock incredible benefits for everyone.</p>
+        
+        <div class="image-container">
+            <img src="assets/adu_backyard.png" alt="A modern backyard garden suite or Accessory Dwelling Unit" class="featured-image">
+            <div class="image-caption">Accessory Dwelling Units (ADUs) fit gracefully into existing backyards, allowing families to support aging in place and intergenerational living.</div>
+        </div>
+
+        <div class="benefits-grid">
+            <div class="card">
+                <h3>Aging in Place & Family</h3>
+                <p>Upzoning allows seniors to downsize into a smaller unit on their own property or nearby. It also lets adult children live close enough to provide care and connection while maintaining independence.</p>
+            </div>
+            <div class="card">
+                <h3>Walkability & Health</h3>
+                <p>When shops, cafes, and offices are integrated with housing, people walk and bike more. This active lifestyle leads to better physical health and stronger community social ties.</p>
+            </div>
+            <div class="card">
+                <h3>Climate & Environment</h3>
+                <p>Compact, walkable neighborhoods use less land and energy. By reducing the need for long car trips, we directly lower carbon emissions and protect our natural surroundings.</p>
+            </div>
+            <div class="card">
+                <h3>Affordability & Equity</h3>
+                <p>Increasing housing supply helps stabilize prices. Furthermore, reforming exclusionary zoning is a vital step toward making neighborhoods accessible to people of all income levels and backgrounds.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Help -->
+    <section id="advocacy">
+        <h2>How You Can Make a Difference</h2>
+        <p>The most important thing to remember is this: <strong>Local officials listen to the people who show up.</strong> Zoning is decided at the municipal level, and your voice can drive real change.</p>
+        
+        <div class="card">
+            <h3>Your Action Plan</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>What it involves</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Discover</strong></td>
+                        <td>Find your neighborhood's zoning map online. Use tools like the National Zoning Atlas.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Learn</strong></td>
+                        <td>Understand what is currently allowed (or forbidden) in your specific zone.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Speak Up</strong></td>
+                        <td>Send an email to your local representative or attend a public hearing about land use.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Connect</strong></td>
+                        <td>Talk to your neighbors and join local pro-housing groups to build momentum.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <h3>Advocacy Do's and Don'ts</h3>
+            <p><strong>DO:</strong> Share personal stories about why housing matters to you. Use facts and research to support your points. Stay respectful and curious.</p>
+            <p><strong>DON'T:</strong> Avoid aggressive or disrespectful language. Don't assume the process will be fast—it takes patience and persistence!</p>
+        </div>
+    </section>
+
+    <!-- Case Studies -->
+    <section id="cases">
+        <h2>Real World Success Stories</h2>
+        <p>Zoning reform isn't just a theoretical idea; it is happening right now in cities across North America.</p>
+        
+        <div class="card">
+            <h3>Minneapolis, Minnesota</h3>
+            <p>Through the <strong class="link-text"><a href="minneapolis.html">Minneapolis 2040 Plan</a></strong>, the city eliminated single-detached-only zoning and allowed duplexes and triplexes across the city. They also removed minimum parking requirements. This bold move aimed to tackle the housing crisis head-on by encouraging more density near transit and within existing neighborhoods.</p>
+        </div>
+
+        <div class="card">
+            <h3>Toronto, Ontario</h3>
+            <p>Toronto has implemented major changes like <strong class="link-text"><a href="toronto.html">EHON (Expanding Housing Options in Neighbourhoods)</a></strong>, allowing apartments up to six stories on major streets. They also legalized Garden Suites and Laneway Suites citywide, providing homeowners with more flexibility and generating much-needed affordable housing supply.</p>
+        </div>
+    </section>
+
+    <!-- Glossary -->
+    <section id="glossary">
+        <h2>Key Terms to Know</h2>
+        <dl>
+            <dt>ADU (Accessory Dwelling Unit)</dt>
+            <dd>A smaller, independent living space (like a garden suite) located on the same lot as a larger primary home.</dd>
+
+            <dt>As-of-Right</dt>
+            <dd>Development that is allowed by current rules without needing special permission or extra hearings.</dd>
+
+            <dt>Missing Middle Housing</dt>
+            <dd>Housing types—like duplexes, townhouses, and courtyard apartments—that sit between single-family homes and large apartment buildings.</dd>
+
+            <dt>Upzoning</dt>
+            <dd>Changing zoning laws to allow for more units or taller buildings on a piece of land.</dd>
+
+            <dt>YIMBY</dt>
+            <dd>Short for "Yes In My Back Yard." It refers to people who support the development of new, diverse housing in their communities.</dd>
+        </dl>
+    </section>
+
+</main>
+
+<footer>
+    <div class="container footer-content">
+        <h3>Thriving In Place</h3>
+        <p>Working towards more sustainable, walkable, and affordable neighborhoods for all.</p>
+        <p>&copy; 2026 Thriving In Place Project. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>
