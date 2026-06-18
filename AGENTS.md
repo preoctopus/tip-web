@@ -1,44 +1,60 @@
 # Agents Documentation
 
-This directory contains documentation for AI agents interacting with or managing this project. 
+This directory contains documentation and instructions for AI agents interacting with, maintaining, or developing this repository.
 
 ## Supported Agent Capabilities
 
-Agents can be configured to perform the following tasks within this repository:
+Agents are equipped to perform the following operations within this workspace:
 
 ### 1. Content Generation & Expansion
-- **Summarization**: Extract key information from large PDFs and Markdown files to generate high-level summaries.
-- **Expansion**: Take simple bullet points or short summaries and expand them into human-readable, long-form content (e.g., creating `index.html` from `SUMMARY.md`).
-- **Tone Adjustment**: Reformat existing text to match specific reading levels (e.g., "High School Graduate") or personas (e.g., "Policy Advocate").
+- **Summarization & Extraction**: Parse and distill research data from source PDFs or Markdown files.
+- **Tone Adjustment**: Reformat structural text to meet specific target personas (e.g., policy advocates) or reading levels (e.g., "High School Graduate").
 
 ### 2. Web Development & Deployment
-- **HTML/CSS Generation**: Generate semantic, accessible HTML5 and modern CSS3 based on predefined design tokens (color palettes, typography).
-- **Multi-page Orchestration**: Create linked internal site structures with working navigation and Table of Contents.
-- **Link Integrity Checks**: Verify that all internal anchors (`#section`) and relative links (`file.html`) across the project are functional.
+- **HTML/CSS Generation**: Generate semantic, highly-accessible HTML5 and modern CSS3 incorporating the design tokens in `:root` variables.
+- **Navigation & Routing**: Maintain multi-page linking integrity.
+- **Nginx Reverse Proxy Management**: Update and manage `nginx.conf` routing configuration to direct traffic to nested web applications.
+- **Docker Orchestration**: Rebuild and test containerized releases (`Dockerfile`) to guarantee clean deployment.
 
 ### 3. Image Generation & Asset Management
-- **AI Image Generation**: Generate contextual images (skylines, architectural visualizations, illustrations) for case study pages using AI image generation tools.
-- **Image Integration**: Add responsive `<img>` tags with proper `alt` text, captions, and CSS styling (`section-image`, `hero-image` classes).
-- **Asset Organization**: Store generated images in the `assets/` directory with descriptive filenames.
+- **Contextual Visualization**: Generate and store illustrative graphics (e.g., ADUs, walkable neighborhoods, density models) in the `assets/` directory.
+- **Integration**: Insert responsive image blocks with descriptive `alt` tags and stylized `image-caption` typography.
 
-### 4. Documentation & Maintenance
-- **Copyright Management**: Automatically update copyright years across all HTML files in the repository.
-- **File Maintenance**: Ensure structural integrity of HTML (closing tags, valid nesting) after programmatic edits.
+### 4. Code & Data Maintenance
+- **Regression Elasticities**: Manage database profile settings (`cufet_data_compact.json`) used by calculations in the tools. Ensure schemas remain intact.
+- **Cache-Busting Integration**: Whenever edits are made to stylesheets (`index.css`) or scripts (`app.js`) inside subdirectories like `/ghg-tool/` or `/housing-tool/`, increment the query-parameter version strings (e.g., `index.css?v=2` or `app.js?v=2`) in their respective HTML headers. This prevents browsers from serving stale cache copies.
 
-## Integration Patterns
+---
 
-When using an agent with this repository, consider the following patterns:
+## Technical Workflows
 
-### Human-in-the-Loop (HITL)
-For complex content generation (like the case studies), it is recommended to use a **Drafting Pattern**:
-1. Agent generates a draft file (`draft_toronto.html`).
-2. Human reviews for factual accuracy and tone.
-3. Agent overwrites the target file (`toronto.html`) upon approval.
+### 1. Cache-Busting Procedure
+Whenever a stylesheet or script is modified within `/ghg-tool/` or `/housing-tool/`:
+1. Open the tool's `index.html` file.
+2. Locate the asset imports:
+   ```html
+   <link rel="stylesheet" href="index.css?v=X">
+   <script src="app.js?v=Y"></script>
+   ```
+3. Increment the version variable `X` or `Y` (e.g., from `v=2` to `v=3`).
+4. Rebuild the Docker container to verify rendering.
 
-### Automated Maintenance
-The repository is optimized for agents capable of executing bash commands to:
-- List files (`ls`)
-- Read content (`read/cat`)
-- Apply precise text replacements (`edit`)
-- Verify structure via automated parsing or `python` scripts.
-- Copy generated image assets into `assets/`
+### 2. Docker Rebuild Pattern
+Always test containerized routing locally after modifying HTML, CSS, JS, or config files:
+1. Stop and remove the existing container:
+   ```bash
+   docker stop thriving-web && docker rm thriving-web
+   ```
+2. Delete the old image to save space:
+   ```bash
+   docker rmi thriving-in-place-web
+   ```
+3. Rebuild from scratch with the `--no-cache` parameter:
+   ```bash
+   docker build --no-cache -t thriving-in-place-web .
+   ```
+4. Start the container in detached mode on port `8080`:
+   ```bash
+   docker run -d -p 8080:8080 --name thriving-web thriving-in-place-web
+   ```
+5. Run a validation check (e.g. `curl -I http://localhost:8080/`) to verify status is 200 OK.
