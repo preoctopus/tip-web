@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gentle Density Simulator • Visual Neighborhood Transformation Tool</title>
+    <meta name="description" content="Simulate the visual, climate, and social impacts of gentle density upzoning stages. Driven by the CUFET regression model.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css?v=2">
+</head>
+<body class="light-theme">
+    <!-- Background Glow Effects -->
+    <div class="glow-container">
+        <div class="glow-sphere glow-green"></div>
+        <div class="glow-sphere glow-blue"></div>
+        <div class="glow-sphere glow-purple"></div>
+    </div>
+
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <span class="logo-icon">🏡➔🏢</span>
+                <div>
+                    <h1>Gentle Density Simulator</h1>
+                    <p class="subtitle">Visual Neighborhood Transformation Tool</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="../index.html" class="back-link">&larr; Back to Overview</a>
+                <div class="header-tag">
+                    <span>CUFET Model Powered</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <div class="simulator-grid">
+            
+            <!-- COLUMN 1: Inputs & Parameters Selector -->
+            <section class="control-panel glass-card">
+                <div class="card-header">
+                    <h2>📍 Regional Profile</h2>
+                    <p class="card-subtitle">Select a geography to load localized density elasticity factors</p>
+                </div>
+                
+                <form id="simulator-form" class="form-container" onsubmit="event.preventDefault();">
+                    <!-- Geography Selection -->
+                    <div class="form-group row-group">
+                        <div class="field-item">
+                            <label for="country-select">Country</label>
+                            <div class="select-wrapper">
+                                <select id="country-select" required>
+                                    <option value="" disabled selected>Select Country...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field-item">
+                            <label for="city-select">City Profile</label>
+                            <div class="select-wrapper">
+                                <select id="city-select">
+                                    <option value="">-- Custom / Manual --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom City Inputs (Visible if Custom City selected) -->
+                    <div class="form-group" id="custom-city-group" style="display: none;">
+                        <label for="city-name-input">City Name</label>
+                        <input type="text" id="city-name-input" value="Custom City">
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Baseline Parameters Sliders -->
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="pop-slider">City Population</label>
+                            <span class="slider-val-badge" id="pop-val">500,000</span>
+                        </div>
+                        <input type="range" id="pop-slider" min="50000" max="10000000" step="5000" value="500000" class="custom-slider">
+                        <div class="slider-labels">
+                            <span>50k (Small)</span>
+                            <span>10M (Mega)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="area-slider">Urban Land Area</label>
+                            <span class="slider-val-badge" id="area-val">300 km²</span>
+                        </div>
+                        <input type="range" id="area-slider" min="5" max="5000" step="5" value="300" class="custom-slider">
+                        <div class="slider-labels">
+                            <span>5 km²</span>
+                            <span>5,000 km²</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group info-row">
+                        <span class="density-label">City Density:</span>
+                        <strong class="density-val" id="baseline-density">1,667 / km²</strong>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="ev-slider">EV Fleet Share</label>
+                            <span class="slider-val-badge" id="ev-val">5%</span>
+                        </div>
+                        <input type="range" id="ev-slider" min="0" max="100" step="1" value="5" class="custom-slider">
+                        <div class="slider-labels">
+                            <span>0% (All ICE)</span>
+                            <span>100% (All EV)</span>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="card-header mt-6">
+                    <h2>📊 Climate Model Settings</h2>
+                    <p class="card-subtitle">CUFET regression parameters for selected city size</p>
+                </div>
+                
+                <div class="model-readout">
+                    <div class="readout-item">
+                        <span class="readout-label">City Size Band:</span>
+                        <strong id="badge-size-cat" class="readout-val">Medium</strong>
+                    </div>
+                    <div class="readout-item">
+                        <span class="readout-label">Density Elasticity:</span>
+                        <strong id="badge-density-elas" class="readout-val">-0.512</strong>
+                    </div>
+                    <div class="readout-item">
+                        <span class="readout-label">Emission Intensity:</span>
+                        <strong id="badge-emission-intensity" class="readout-val">226.2 g/km</strong>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- COLUMN 2: Visual Map & Zoning Slider -->
+            <section class="visuals-panel">
+                
+                <!-- Map Card containing Isometric SVG -->
+                <article class="map-card glass-card">
+                    <div class="card-header flex-header">
+                        <div>
+                            <h2>Neighborhood Visualizer</h2>
+                            <p class="card-subtitle">Watch the physical landscape morph as zoning rules relax</p>
+                        </div>
+                        <div class="stage-badge" id="current-stage-title">Stage 1: Single-Family</div>
+                    </div>
+                    
+                    <div class="map-container">
+                        <!-- Isometric SVG Map -->
+                        <svg id="neighborhood-svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet">
+                            <!-- Definitions (Gradients & Filters) -->
+                            <defs>
+                                <linearGradient id="road-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#2c3540" />
+                                    <stop offset="100%" stop-color="#3a4552" />
+                                </linearGradient>
+                                <linearGradient id="lawn-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#2e7d32" />
+                                    <stop offset="100%" stop-color="#4caf50" />
+                                </linearGradient>
+                                <linearGradient id="lawn-dense-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#388e3c" />
+                                    <stop offset="100%" stop-color="#66bb6a" />
+                                </linearGradient>
+                                <linearGradient id="roof-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#9e2a2b" />
+                                    <stop offset="100%" stop-color="#540b0c" />
+                                </linearGradient>
+                                <linearGradient id="roof-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#264653" />
+                                    <stop offset="100%" stop-color="#1d3557" />
+                                </linearGradient>
+                                <linearGradient id="cafe-awning" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#e76f51" />
+                                    <stop offset="50%" stop-color="#ffffff" />
+                                    <stop offset="100%" stop-color="#e76f51" />
+                                </linearGradient>
+                                <filter id="drop-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                                    <feDropShadow dx="2" dy="5" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
+                                </filter>
+                            </defs>
+
+                            <!-- LAYER 1: BASE MAP -->
+                            <rect width="800" height="500" fill="#eef2ee" rx="12" />
+                            
+                            <!-- Lawn backgrounds -->
+                            <polygon points="50,220 400,40 750,220 400,400" fill="#d2e8d7" opacity="0.65"/>
+
+                            <!-- LAYER 2: STREET NETWORK -->
+                            <!-- Sidewalk Left (Stage 1-2 default, narrow) -->
+                            <polygon id="sidewalk-left-narrow" points="0,290 800,90 800,95 0,295" fill="#4d5a68" />
+                            
+                            <!-- Sidewalk Left (Stage 3-4 wide sidewalk + bike lane) -->
+                            <polygon id="sidewalk-left-wide" class="stage-3-up" points="0,270 800,70 800,85 0,285" fill="#6c7a89" />
+                            <polygon id="bike-lane-left" class="stage-3-up" points="0,285 800,85 800,98 0,298" fill="#1b4d3e" />
+                            <!-- Bike lane lines -->
+                            <path class="stage-3-up" d="M0,285 L800,85" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,6" />
+
+                            <!-- Main Road Carriageway -->
+                            <polygon points="0,300 800,100 800,150 0,350" fill="url(#road-grad)" />
+                            <!-- Road Center Dash Line -->
+                            <path d="M0,325 L800,125" stroke="#e9c46a" stroke-width="2" stroke-dasharray="10,12" />
+
+                            <!-- Sidewalk Right (Stage 1-3 default, narrow) -->
+                            <polygon id="sidewalk-right-narrow" points="0,350 800,150 800,155 0,355" fill="#4d5a68" />
+                            
+                            <!-- Sidewalk Right (Stage 4 wide) -->
+                            <polygon id="sidewalk-right-wide" class="stage-4-up" points="0,350 800,150 800,175 0,375" fill="#6c7a89" />
+                            <polygon id="bike-lane-right" class="stage-4-up" points="0,350 800,150 800,160 0,360" fill="#1b4d3e" />
+                            <path class="stage-4-up" d="M0,350 L800,150" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,6" />
+
+                            <!-- Bus Stop / Transit Shelter -->
+                            <g class="stage-4-up" filter="url(#drop-shadow)">
+                                <polygon points="380,163 420,153 430,158 390,168" fill="#475569" />
+                                <line x1="390" y1="168" x2="390" y2="148" stroke="#cbd5e1" stroke-width="2" />
+                                <line x1="430" y1="158" x2="430" y2="138" stroke="#cbd5e1" stroke-width="2" />
+                                <!-- glass roof -->
+                                <polygon points="385,148 425,138 433,143 393,153" fill="rgba(56, 189, 248, 0.4)" stroke="#cbd5e1" stroke-width="1" />
+                            </g>
+
+                            <!-- LAYER 3: PARCEL LANDSCAPING AND STRUCTURES -->
+
+                            <!-- PARCEL 1 (Top Left): House & ADU (Stage 2-4) -->
+                            <g transform="translate(160, 210)" filter="url(#drop-shadow)">
+                                <!-- Lawn -->
+                                <polygon points="-80,0 0,-40 80,0 0,40" fill="url(#lawn-grad)" />
+                                <!-- Driveway -->
+                                <polygon points="-10,25 20,40 50,25 20,10" fill="#475569" />
+                                <!-- Stage 1 Driveway Car -->
+                                <g class="stage-1-only" transform="translate(15, 20)">
+                                    <polygon points="-12,0 0,-6 12,0 0,6" fill="#e76f51" />
+                                    <polygon points="-8,-3 0,-7 8,-3 0,1" fill="#f4a261" />
+                                </g>
+
+                                <!-- Main House -->
+                                <g class="building-group house-structure">
+                                    <!-- Left Wall -->
+                                    <polygon points="-40,0 -40,-30 0,-10 0,20" fill="#a8dadc" />
+                                    <!-- Right Wall -->
+                                    <polygon points="0,20 0,-10 40,-30 40,0" fill="#457b9d" />
+                                    <!-- Front Door & Windows -->
+                                    <rect x="-25" y="-12" width="6" height="12" fill="#1d3557" transform="skewY(26.5)" />
+                                    <rect x="15" y="-12" width="8" height="8" fill="#f1faee" transform="skewY(-26.5)" />
+                                    <!-- Roof Left -->
+                                    <polygon points="-40,-30 0,-50 0,-10" fill="url(#roof-grad-1)" />
+                                    <!-- Roof Right -->
+                                    <polygon points="0,-10 0,-50 40,-30" fill="#780000" />
+                                </g>
+
+                                <!-- ADU / Backyard Suite (Stage 2-4) -->
+                                <g class="stage-2-up building-group adu-structure" transform="translate(-45, -15)">
+                                    <!-- Small Lawn Path -->
+                                    <polygon points="10,20 20,25 25,22 15,17" fill="#8d99ae" />
+                                    <!-- ADU Walls -->
+                                    <polygon points="-15,0 -15,-15 0,-7 0,8" fill="#e2e8f0" />
+                                    <polygon points="0,8 0,-7 15,-15 15,0" fill="#cbd5e1" />
+                                    <!-- ADU Roof -->
+                                    <polygon points="-15,-15 0,-25 0,-7" fill="url(#roof-grad-2)" />
+                                    <polygon points="0,-7 0,-25 15,-15" fill="#1d3557" />
+                                    <!-- Text label for zoning explanation -->
+                                    <text x="-15" y="-28" class="map-label">ADU</text>
+                                </g>
+                            </g>
+
+                            <!-- PARCEL 2 (Top Middle): House (Stage 1-2) ➔ Triplex Multiplex (Stage 3-4) -->
+                            <g transform="translate(360, 160)" filter="url(#drop-shadow)">
+                                <!-- Lawn -->
+                                <polygon points="-80,0 0,-40 80,0 0,40" fill="url(#lawn-grad)" />
+                                <!-- Driveway -->
+                                <polygon points="-10,25 20,40 50,25 20,10" fill="#475569" />
+                                <!-- Stage 1-2 Driveway Car -->
+                                <g class="stage-1-or-2" transform="translate(15, 20)">
+                                    <polygon points="-12,0 0,-6 12,0 0,6" fill="#457b9d" />
+                                    <polygon points="-8,-3 0,-7 8,-3 0,1" fill="#a8dadc" />
+                                </g>
+
+                                <!-- Stage 1 & 2: Single Family House -->
+                                <g class="stage-1-or-2 building-group house-structure">
+                                    <polygon points="-35,5 -35,-25 0,-7 0,23" fill="#e9c46a" />
+                                    <polygon points="0,23 0,-7 35,-25 35,5" fill="#f4a261" />
+                                    <polygon points="-35,-25 0,-45 0,-7" fill="url(#roof-grad-1)" />
+                                    <polygon points="0,-7 0,-45 35,-25" fill="#780000" />
+                                </g>
+
+                                <!-- Stage 3 & 4: Multiplex (Triplex) -->
+                                <g class="stage-3-up building-group multiplex-structure">
+                                    <!-- Base/Walls -->
+                                    <polygon points="-45,10 -45,-35 0,-13 0,32" fill="#cbd5e1" />
+                                    <polygon points="0,32 0,-13 45,-35 45,10" fill="#94a3b8" />
+                                    <!-- Architectural wood panel overlay -->
+                                    <polygon points="-35,5 -35,-20 -10,-8 -10,17" fill="#b97a57" />
+                                    <polygon points="10,27 10,2 35,-10 35,15" fill="#b97a57" />
+                                    <!-- Flat modern roof -->
+                                    <polygon points="-45,-35 0,-57 45,-35 0,-13" fill="#334155" />
+                                    <polygon points="-42,-37 0,-54 42,-37 0,-15" fill="#1e293b" />
+                                    <!-- Three front doors indicating Triplex -->
+                                    <rect x="-40" y="-2" width="5" height="12" fill="#1e293b" transform="skewY(26.5)" />
+                                    <rect x="-22" y="7" width="5" height="12" fill="#1e293b" transform="skewY(26.5)" />
+                                    <rect x="25" y="-1" width="5" height="12" fill="#1e293b" transform="skewY(-26.5)" />
+                                    <!-- Text label -->
+                                    <text x="-25" y="-42" class="map-label font-accent">Triplex</text>
+                                </g>
+                            </g>
+
+                            <!-- PARCEL 3 (Top Right): House & ADU (Stage 2-4) -->
+                            <g transform="translate(560, 110)" filter="url(#drop-shadow)">
+                                <!-- Lawn -->
+                                <polygon points="-80,0 0,-40 80,0 0,40" fill="url(#lawn-grad)" />
+                                <!-- Driveway -->
+                                <polygon points="-10,25 20,40 50,25 20,10" fill="#475569" />
+
+                                <!-- Main House -->
+                                <g class="building-group house-structure">
+                                    <polygon points="-40,0 -40,-30 0,-10 0,20" fill="#b8c0ff" />
+                                    <polygon points="0,20 0,-10 40,-30 40,0" fill="#ffd166" />
+                                    <polygon points="-40,-30 0,-50 0,-10" fill="url(#roof-grad-2)" />
+                                    <polygon points="0,-10 0,-50 40,-30" fill="#073b4c" />
+                                </g>
+
+                                <!-- Backyard ADU -->
+                                <g class="stage-2-up building-group adu-structure" transform="translate(-40, -15)">
+                                    <polygon points="-15,0 -15,-15 0,-7 0,8" fill="#e2e8f0" />
+                                    <polygon points="0,8 0,-7 15,-15 15,0" fill="#cbd5e1" />
+                                    <polygon points="-15,-15 0,-25 0,-7" fill="url(#roof-grad-1)" />
+                                    <polygon points="0,-7 0,-25 15,-15" fill="#780000" />
+                                </g>
+                            </g>
+
+                            <!-- PARCEL 4 (Bottom Left): House (Stage 1-3) ➔ Mixed-Use Corner Cafe/Apts (Stage 4) -->
+                            <g transform="translate(240, 360)" filter="url(#drop-shadow)">
+                                <!-- Lawn (Stage 1-3) -->
+                                <polygon id="p4-lawn" class="stage-3-down" points="-85,0 0,-42 85,0 0,42" fill="url(#lawn-grad)" />
+                                <!-- Consolidated Urban Plaza (Stage 4) -->
+                                <polygon id="p4-plaza" class="stage-4-up" points="-85,0 0,-42 85,0 0,42" fill="#576574" />
+                                <polygon id="p4-plaza-decor" class="stage-4-up" points="-70,0 0,-35 70,0 0,35" fill="#475569" />
+
+                                <!-- Driveway (Stage 1-3) -->
+                                <polygon id="p4-driveway" class="stage-3-down" points="-50,25 -20,40 10,25 -20,10" fill="#475569" />
+                                <!-- Stage 1 Driveway Car -->
+                                <g id="p4-car-s1" class="stage-1-only" transform="translate(-25, 20)">
+                                    <polygon points="-12,0 0,-6 12,0 0,6" fill="#ef476f" />
+                                    <polygon points="-8,-3 0,-7 8,-3 0,1" fill="#ffffff" />
+                                </g>
+
+                                <!-- Stage 1, 2, 3: Single Family House -->
+                                <g class="stage-3-down building-group house-structure">
+                                    <polygon points="-40,0 -40,-30 0,-10 0,20" fill="#e85d04" />
+                                    <polygon points="0,20 0,-10 40,-30 40,0" fill="#faa307" />
+                                    <polygon points="-40,-30 0,-50 0,-10" fill="url(#roof-grad-1)" />
+                                    <polygon points="0,-10 0,-50 40,-30" fill="#d00000" />
+                                </g>
+
+                                <!-- Stage 4: Mixed-Use Cafe + Apartments -->
+                                <g class="stage-4-up building-group mixed-use-structure" transform="translate(-5, 10)">
+                                    <!-- Main 3-story Building Block -->
+                                    <polygon points="-50,10 -50,-65 0,-40 0,35" fill="#f8fafc" />
+                                    <polygon points="0,35 0,-40 50,-65 50,10" fill="#cbd5e1" />
+                                    <!-- Ground Floor Storefront Glass (Left) -->
+                                    <polygon points="-42,8 -42,-10 -5,-28 -5,10" fill="rgba(14, 165, 233, 0.4)" stroke="#cbd5e1" stroke-width="1.5" />
+                                    <!-- Ground Floor Storefront Glass (Right) -->
+                                    <polygon points="5,14 5,-23 42,-42 42,-5" fill="rgba(14, 165, 233, 0.4)" stroke="#cbd5e1" stroke-width="1.5" />
+                                    <!-- Cafe Cafe Awning -->
+                                    <polygon points="-45,-10 -5,-30 -2,-23 -42,-3" fill="url(#cafe-awning)" />
+                                    <polygon points="2,-21 42,-41 45,-34 5,-14" fill="url(#cafe-awning)" />
+                                    
+                                    <!-- Upper Window Rows (Apartments) -->
+                                    <!-- Row 2 Windows -->
+                                    <polygon points="-40,-20 -40,-32 -30,-37 -30,-25" fill="#1e293b" />
+                                    <polygon points="-20,-28 -20,-40 -10,-45 -10,-33" fill="#1e293b" />
+                                    <polygon points="10,-28 10,-40 20,-35 20,-23" fill="#1e293b" />
+                                    <polygon points="30,-38 30,-50 40,-45 40,-33" fill="#1e293b" />
+                                    
+                                    <!-- Row 3 Windows -->
+                                    <polygon points="-40,-42 -40,-54 -30,-59 -30,-47" fill="#1e293b" />
+                                    <polygon points="-20,-50 -20,-62 -10,-67 -10,-55" fill="#1e293b" />
+                                    <polygon points="10,-50 10,-62 20,-57 20,-45" fill="#1e293b" />
+                                    <polygon points="30,-60 30,-72 40,-67 40,-55" fill="#1e293b" />
+
+                                    <!-- Flat Roof -->
+                                    <polygon points="-50,-65 0,-90 50,-65 0,-40" fill="#334155" />
+                                    <!-- Cafe Chairs / Tables in plaza -->
+                                    <g transform="translate(-40, 25)" class="plaza-furniture">
+                                        <!-- Table -->
+                                        <ellipse cx="0" cy="0" rx="6" ry="3" fill="#e76f51" />
+                                        <line x1="0" y1="0" x2="0" y2="4" stroke="#475569" stroke-width="1.5" />
+                                        <!-- Chairs -->
+                                        <polygon points="-8,-2 -10,-3 -10,1 -8,2" fill="#cbd5e1" />
+                                        <polygon points="8,-2 10,-3 10,1 8,2" fill="#cbd5e1" />
+                                    </g>
+                                    <g transform="translate(25, 28)" class="plaza-furniture">
+                                        <ellipse cx="0" cy="0" rx="6" ry="3" fill="#e76f51" />
+                                        <line x1="0" y1="0" x2="0" y2="4" stroke="#475569" stroke-width="1.5" />
+                                    </g>
+                                    
+                                    <!-- Label -->
+                                    <text x="-45" y="-75" class="map-label font-accent highlight-text">Cafe &amp; Apts</text>
+                                </g>
+                            </g>
+
+                            <!-- PARCEL 5 (Bottom Middle): House (Stage 1-2) ➔ Townhouse Duplex (Stage 3-4) -->
+                            <g transform="translate(440, 300)" filter="url(#drop-shadow)">
+                                <!-- Lawn -->
+                                <polygon points="-80,0 0,-40 80,0 0,40" fill="url(#lawn-grad)" />
+                                <!-- Driveway -->
+                                <polygon points="-10,25 20,40 50,25 20,10" fill="#475569" />
+
+                                <!-- Stage 1 & 2: House -->
+                                <g class="stage-1-or-2 building-group house-structure">
+                                    <polygon points="-40,0 -40,-30 0,-10 0,20" fill="#2a9d8f" />
+                                    <polygon points="0,20 0,-10 40,-30 40,0" fill="#264653" />
+                                    <polygon points="-40,-30 0,-50 0,-10" fill="url(#roof-grad-1)" />
+                                    <polygon points="0,-10 0,-50 40,-30" fill="#780000" />
+                                </g>
+
+                                <!-- Stage 3 & 4: Modern Duplex / Townhouses -->
+                                <g class="stage-3-up building-group duplex-structure">
+                                    <!-- Unit A (Left) -->
+                                    <g transform="translate(-20, 5)">
+                                        <polygon points="-25,0 -25,-30 0,-18 0,12" fill="#cbd5e1" />
+                                        <polygon points="0,12 0,-18 25,-30 25,0" fill="#94a3b8" />
+                                        <polygon points="-25,-30 0,-42 25,-30 0,-18" fill="#1e293b" />
+                                        <!-- door -->
+                                        <rect x="-15" y="-5" width="4" height="10" fill="#e76f51" transform="skewY(26.5)" />
+                                    </g>
+                                    <!-- Unit B (Right) -->
+                                    <g transform="translate(20, -15)">
+                                        <polygon points="-25,0 -25,-30 0,-18 0,12" fill="#cbd5e1" />
+                                        <polygon points="0,12 0,-18 25,-30 25,0" fill="#94a3b8" />
+                                        <polygon points="-25,-30 0,-42 25,-30 0,-18" fill="#1e293b" />
+                                        <!-- door -->
+                                        <rect x="-15" y="-5" width="4" height="10" fill="#e76f51" transform="skewY(26.5)" />
+                                    </g>
+                                    <!-- Label -->
+                                    <text x="-25" y="-48" class="map-label">Duplex</text>
+                                </g>
+                            </g>
+
+                            <!-- PARCEL 6 (Bottom Right): House (Stage 1-4) -->
+                            <g transform="translate(640, 240)" filter="url(#drop-shadow)">
+                                <!-- Lawn -->
+                                <polygon points="-80,0 0,-40 80,0 0,40" fill="url(#lawn-grad)" />
+                                <!-- Driveway -->
+                                <polygon points="-10,25 20,40 50,25 20,10" fill="#475569" />
+                                <!-- Stage 1-3 Driveway Car -->
+                                <g class="stage-3-down" transform="translate(15, 20)">
+                                    <polygon points="-12,0 0,-6 12,0 0,6" fill="#e9c46a" />
+                                    <polygon points="-8,-3 0,-7 8,-3 0,1" fill="#cbd5e1" />
+                                </g>
+
+                                <!-- House Structure -->
+                                <g class="building-group house-structure">
+                                    <polygon points="-40,0 -40,-30 0,-10 0,20" fill="#e0aaff" />
+                                    <polygon points="0,20 0,-10 40,-30 40,0" fill="#c77dff" />
+                                    <polygon points="-40,-30 0,-50 0,-10" fill="url(#roof-grad-2)" />
+                                    <polygon points="0,-10 0,-50 40,-30" fill="#3c096c" />
+                                </g>
+                            </g>
+
+
+                            <!-- LAYER 4: ENVIROMENTAL DECORATIONS (TREES, BIOSWALES, PARKING) -->
+                            <!-- Trees: Draw nice green globes on stems -->
+                            <!-- Tree 1 (Top Corner) -->
+                            <g transform="translate(400, 125)">
+                                <line x1="0" y1="0" x2="0" y2="-15" stroke="#795548" stroke-width="3" />
+                                <circle cx="0" cy="-18" r="12" fill="#2d6a4f" />
+                                <circle cx="-4" cy="-22" r="8" fill="#40916c" opacity="0.8" />
+                            </g>
+                            <!-- Additional Trees (Stage 4 only - added tree cover) -->
+                            <g class="stage-4-up" transform="translate(150, 420)">
+                                <line x1="0" y1="0" x2="0" y2="-12" stroke="#795548" stroke-width="2" />
+                                <circle cx="0" cy="-14" r="10" fill="#2d6a4f" />
+                            </g>
+                            <g class="stage-4-up" transform="translate(530, 360)">
+                                <line x1="0" y1="0" x2="0" y2="-12" stroke="#795548" stroke-width="2" />
+                                <circle cx="0" cy="-14" r="10" fill="#2d6a4f" />
+                            </g>
+                            
+                            <!-- Rain Garden / Bioswale (Stage 4 only, replacing pavement area) -->
+                            <g class="stage-4-up" transform="translate(480, 340)">
+                                <polygon points="-20,0 0,-10 20,0 0,10" fill="#1d3557" opacity="0.8" />
+                                <ellipse cx="0" cy="0" rx="14" ry="7" fill="#2a9d8f" opacity="0.6" />
+                                <circle cx="-5" cy="-2" r="2" fill="#fff" opacity="0.4" />
+                                <text x="-25" y="-12" class="map-label-small">Bioswale</text>
+                            </g>
+
+                            <!-- LAYER 5: ANIMATED CHARACTERS / MOBILE TRAFFIC -->
+                            
+                            <!-- Road Traffic (ICE Cars in Stage 1 & 2) -->
+                            <g id="traffic-cars">
+                                <!-- Red Car driving (Stage 1-3) -->
+                                <g class="anim-car-1 stage-3-down" transform="translate(0,0)">
+                                    <polygon points="-16,0 0,-8 16,0 0,8" fill="#e63946" />
+                                    <!-- Cabin -->
+                                    <polygon points="-10,-3 0,-8 10,-3 0,2" fill="#1d3557" />
+                                    <!-- Headlights -->
+                                    <polygon points="12,2 18,3 12,5" fill="#ffe3e3" opacity="0.8" />
+                                </g>
+                                
+                                <!-- Blue Car driving opposite direction (Stage 1-2) -->
+                                <g class="anim-car-2 stage-2-down" transform="translate(0,0)">
+                                    <polygon points="16,0 0,-8 -16,0 0,8" fill="#1d3557" />
+                                    <polygon points="10,-3 0,-8 -10,-3 0,2" fill="#a8dadc" />
+                                </g>
+
+                                <!-- EV Delivery Van (Stage 4 Only, replacing heavy ICE traffic) -->
+                                <g class="anim-car-1 stage-4-up" transform="translate(0,0)">
+                                    <polygon points="-20,0 0,-10 20,0 0,10" fill="#10b981" />
+                                    <polygon points="-18,-5 -18,-18 5,-18 10,-10 10,0" fill="#ffffff" />
+                                    <polygon points="1,-10 7,-10 7,-4 1,-4" fill="#64748b" />
+                                    <text x="-12" y="-22" style="font-size: 8px; fill: #ffffff; font-family: sans-serif; font-weight: bold;">EV</text>
+                                </g>
+                            </g>
+
+                            <!-- Active Mobility: Cyclists (Stage 3 & 4) -->
+                            <g id="traffic-bikes" class="stage-3-up">
+                                <g class="anim-bike-1" transform="translate(0,0)">
+                                    <!-- Bike Frame -->
+                                    <line x1="-8" y1="4" x2="8" y2="-4" stroke="#10b981" stroke-width="1.5" />
+                                    <!-- Wheels -->
+                                    <circle cx="-6" cy="3" r="3" fill="none" stroke="#fff" stroke-width="1.2" />
+                                    <circle cx="6" cy="-3" r="3" fill="none" stroke="#fff" stroke-width="1.2" />
+                                    <!-- Cyclist Body -->
+                                    <circle cx="0" cy="-8" r="3" fill="#f4a261" />
+                                    <line x1="0" y1="-5" x2="-2" y2="1" stroke="#334155" stroke-width="2" />
+                                </g>
+                            </g>
+
+                            <!-- Pedestrian Activity (Increasing by stage) -->
+                            <!-- Pedestrian 1: Senior walking near ADU (Stage 2-4) -->
+                            <g class="stage-2-up" transform="translate(130, 230)">
+                                <circle cx="0" cy="-12" r="3" fill="#ffe5d9" />
+                                <line x1="0" y1="-9" x2="0" y2="-2" stroke="#e76f51" stroke-width="2" />
+                                <line x1="0" y1="-2" x2="-2" y2="4" stroke="#e76f51" stroke-width="1.5" />
+                                <line x1="0" y1="-2" x2="2" y2="4" stroke="#e76f51" stroke-width="1.5" />
+                                <!-- cane -->
+                                <line x1="1" y1="-4" x2="3" y2="4" stroke="#9e2a2b" stroke-width="1" />
+                            </g>
+
+                            <!-- Pedestrian 2: Walker on Left Sidewalk (Stage 3-4) -->
+                            <g class="stage-3-up anim-walker-1" transform="translate(0,0)">
+                                <circle cx="0" cy="-12" r="3" fill="#ffb703" />
+                                <line x1="0" y1="-9" x2="0" y2="-2" stroke="#2196f3" stroke-width="2" />
+                                <line x1="0" y1="-2" x2="-2" y2="4" stroke="#2196f3" stroke-width="1.5" />
+                                <line x1="0" y1="-2" x2="2" y2="4" stroke="#2196f3" stroke-width="1.5" />
+                            </g>
+
+                            <!-- Pedestrian 3 & 4: Active plaza goers (Stage 4 only) -->
+                            <g class="stage-4-up" transform="translate(210, 375)">
+                                <circle cx="0" cy="-12" r="3" fill="#ffe5d9" />
+                                <line x1="0" y1="-9" x2="0" y2="-2" stroke="#e76f51" stroke-width="2" />
+                                <line x1="0" y1="-2" x2="-2" y2="4" stroke="#334155" stroke-width="1.5" />
+                                <line x1="0" y1="-2" x2="2" y2="4" stroke="#334155" stroke-width="1.5" />
+                            </g>
+                            <g class="stage-4-up" transform="translate(230, 390)">
+                                <circle cx="0" cy="-12" r="3" fill="#e0aaff" />
+                                <line x1="0" y1="-9" x2="0" y2="-2" stroke="#5c59e7" stroke-width="2" />
+                                <line x1="0" y1="-2" x2="-1" y2="4" stroke="#5c59e7" stroke-width="1.5" />
+                                <line x1="0" y1="-2" x2="2" y2="4" stroke="#5c59e7" stroke-width="1.5" />
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Continuous Slider Controls -->
+                    <div class="zoning-control-bar">
+                        <div class="slider-header-wrapper">
+                            <span class="control-label-text">Select Zoning Framework:</span>
+                            <span class="stage-description" id="stage-desc-short">Stage 1: Exclusive Single-Family Zoning (Baseline)</span>
+                        </div>
+                        <input type="range" id="stage-slider" min="1" max="4" step="1" value="1" class="custom-slider stage-slider-color">
+                        <div class="stage-ticks">
+                            <button class="tick-btn active" data-stage="1">
+                                <span class="tick-num">1</span>
+                                <span class="tick-label">Single-Family</span>
+                            </button>
+                            <button class="tick-btn" data-stage="2">
+                                <span class="tick-num">2</span>
+                                <span class="tick-label">Allow ADUs</span>
+                            </button>
+                            <button class="tick-btn" data-stage="3">
+                                <span class="tick-num">3</span>
+                                <span class="tick-label">Multiplexes</span>
+                            </button>
+                            <button class="tick-btn" data-stage="4">
+                                <span class="tick-num">4</span>
+                                <span class="tick-label">Mixed-Use Nodes</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Stage Narrative Card -->
+                <article class="narrative-card glass-card">
+                    <h3>📢 Neighborhood Status &amp; Zoning Impact</h3>
+                    <p id="stage-narrative-text" class="narrative-text">
+                        Loading neighborhood profile...
+                    </p>
+                </article>
+                
+                <!-- Metrics Dashboard Grid -->
+                <div class="metrics-grid">
+                    <article class="metric-card glass-card">
+                        <div class="metric-header">
+                            <span class="metric-icon">🏠</span>
+                            <p class="metric-label">Housing Units Added</p>
+                        </div>
+                        <div class="metric-val" id="metric-units">6 Units</div>
+                        <p class="metric-sub" id="metric-affordability-proxy">Affordability: Low</p>
+                    </article>
+
+                    <article class="metric-card glass-card">
+                        <div class="metric-header">
+                            <span class="metric-icon">🚗</span>
+                            <p class="metric-label">Vehicle Miles Traveled (VMT)</p>
+                        </div>
+                        <div class="metric-val" id="metric-vmt-reduction">0%</div>
+                        <p class="metric-sub" id="metric-vmt-miles">Baseline Driving</p>
+                    </article>
+
+                    <article class="metric-card glass-card">
+                        <div class="metric-header">
+                            <span class="metric-icon">🚶</span>
+                            <p class="metric-label">Walkability / Transit Score</p>
+                        </div>
+                        <div class="metric-val" id="metric-walk-score">18/100</div>
+                        <p class="metric-sub" id="metric-walk-desc">Car Dependent</p>
+                    </article>
+
+                    <article class="metric-card glass-card">
+                        <div class="metric-header">
+                            <span class="metric-icon">👵</span>
+                            <p class="metric-label">"Aging In Place" Score</p>
+                        </div>
+                        <div class="metric-val" id="metric-aging-score">22%</div>
+                        <p class="metric-sub" id="metric-aging-desc">Highly Restrictive</p>
+                    </article>
+
+                    <article class="metric-card glass-card span-2 highlight-metric-card" id="emissions-card">
+                        <div class="metric-flex">
+                            <div>
+                                <div class="metric-header">
+                                    <span class="metric-icon">🌱</span>
+                                    <p class="metric-label text-white">Annual Neighborhood CO₂ Emissions</p>
+                                </div>
+                                <div class="metric-comparison inline">
+                                    <div class="metric-val current" id="emissions-baseline">-- t</div>
+                                    <div class="metric-arrow">➔</div>
+                                    <div class="metric-val proposed" id="emissions-proposed">-- t</div>
+                                </div>
+                                <p class="metric-sub text-white-muted" id="emissions-reduction-pct">0% reduction</p>
+                            </div>
+                            <div class="emissions-badge-status">
+                                <div class="eco-score-title">Avoided CO₂</div>
+                                <div class="eco-score-val" id="emissions-avoided">0.0 t</div>
+                                <div class="eco-score-desc">tons / year</div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+
+        <!-- BOTTOM GRID: Glossary & Advocacy Exporter -->
+        <div class="bottom-grid mt-6">
+            
+            <!-- Zoning Glossary & Definitions -->
+            <section class="glossary-section glass-card">
+                <div class="card-header">
+                    <h2>📖 Zoning Terms Glossary</h2>
+                    <p class="card-subtitle">Hover or click a term to inspect its policy definition (from pages 26-27 of the guide)</p>
+                </div>
+                <div class="glossary-layout">
+                    <div class="glossary-term-list">
+                        <button class="glossary-term-btn active" data-term="adu">Accessory Dwelling Unit (ADU)</button>
+                        <button class="glossary-term-btn" data-term="upzoning">Upzoning</button>
+                        <button class="glossary-term-btn" data-term="missing-middle">"Missing Middle" Housing</button>
+                        <button class="glossary-term-btn" data-term="mixed-use">Mixed-Use Development</button>
+                        <button class="glossary-term-btn" data-term="as-of-right">As-of-Right</button>
+                        <button class="glossary-term-btn" data-term="tod">Transit-Oriented Dev (TOD)</button>
+                        <button class="glossary-term-btn" data-term="sprawl">Sprawl</button>
+                        <button class="glossary-term-btn" data-term="setback">Setback</button>
+                        <button class="glossary-term-btn" data-term="far">Floor Area Ratio (FAR)</button>
+                        <button class="glossary-term-btn" data-term="yimby">YIMBY</button>
+                    </div>
+                    <div class="glossary-definition-panel">
+                        <h4 id="glossary-def-title">Accessory Dwelling Unit (ADU)</h4>
+                        <p id="glossary-def-text">
+                            A smaller, independent living space located on the same lot as a larger, primary residence. ADUs can be detached structures, converted spaces within the main house, or attached to the main home. They offer additional living space, rental income potential, and can help with housing affordability.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Share Your Vision / Advocacy Email -->
+            <section class="advocacy-section glass-card">
+                <div class="card-header">
+                    <h2>✉️ Share Your Vision</h2>
+                    <p class="card-subtitle">Advocate for housing choice. Generate a localized letter for your local representatives based on this simulation.</p>
+                </div>
+                <div class="advocacy-container">
+                    <div class="form-group">
+                        <label for="advocacy-rep-name">Recipient Name (e.g. Council Member, Planning Board)</label>
+                        <input type="text" id="advocacy-rep-name" value="Local planning Board Representative">
+                    </div>
+                    <div class="form-group">
+                        <label for="advocacy-letter-body">Generated Letter</label>
+                        <textarea id="advocacy-letter-body" rows="8" readonly></textarea>
+                    </div>
+                    <div class="advocacy-actions">
+                        <button id="copy-letter-btn" class="action-btn secondary-btn">📋 Copy Letter Text</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <p>Gentle Density Simulator built using the CUFET WLS regression models &amp; zoning guidelines from <em>Thriving In Place</em>. Assess local spatial policy outcomes interactively.</p>
+    </footer>
+
+    <!-- JS Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

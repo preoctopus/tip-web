@@ -5,3 +5,27 @@ Thriving_In_Place_alpha_v1.1_mobile.pdf
 AGENTS.md
 README.md
 DEPLOYMENT.md
+.git
+.gitignore
+
+# GHG Tool - exclude non-web files
+ghg-tool/.git
+ghg-tool/.gitignore
+ghg-tool/.gcloudignore
+ghg-tool/.dockerignore
+ghg-tool/Dockerfile
+ghg-tool/nginx.conf
+ghg-tool/deploy_gcp.sh
+ghg-tool/README.md
+ghg-tool/CUFET.xlsx
+ghg-tool/applsci-16-05828.pdf
+
+# Housing Tool - exclude non-web files
+housing-tool/.git
+housing-tool/.gitignore
+housing-tool/Dockerfile
+housing-tool/default.conf
+housing-tool/deploy_gcp.sh
+housing-tool/README.md
+housing-tool/CUFET.xlsx
+housing-tool/Thriving_In_Place_alpha_v1.1_mobile.pdf

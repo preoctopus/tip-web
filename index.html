@@ -102,6 +102,28 @@
             color: var(--color-secondary);
         }
 
+        nav a[href^="ghg-tool"],
+        nav a[href^="housing-tool"] {
+            background: var(--color-secondary);
+            color: var(--color-white);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        nav a[href^="ghg-tool"]:hover,
+        nav a[href^="housing-tool"]:hover {
+            background: var(--color-primary);
+            color: var(--color-white);
+            transform: translateY(-1px);
+        }
+
+        .nav-divider {
+            color: #ccc;
+            user-select: none;
+        }
+
         /* Sections */
         section {
             padding: 5rem 0;
@@ -278,6 +300,9 @@
             header h1 {
                 font-size: 2.5rem;
             }
+            .nav-divider {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -292,6 +317,9 @@
 
 <nav>
     <ul>
+        <li><a href="ghg-tool/" id="nav-ghg-tool">🏙️ GHG Estimation Tool</a></li>
+        <li><a href="housing-tool/" id="nav-housing-tool">🏡 Housing Density Simulator</a></li>
+        <li class="nav-divider" aria-hidden="true">|</li>
         <li><a href="#intro">Introduction</a></li>
         <li><a href="#zoning">What is Zoning?</a></li>
         <li><a href="#benefits">The Benefits</a></li>
@@ -300,6 +328,7 @@
         <li><a href="#glossary">Glossary</a></li>
     </ul>
 </nav>
+
 
 <main class="container">
 
